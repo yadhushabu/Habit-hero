@@ -15,12 +15,15 @@ class HabitSerializer(serializers.ModelSerializer):
     best_streak = serializers.ReadOnlyField()
     success_rate = serializers.ReadOnlyField()
     best_days = serializers.ReadOnlyField()
+    xp = serializers.ReadOnlyField()
+    badges = serializers.ReadOnlyField()
     checkins = CheckInSerializer(many=True, read_only=True)
 
     class Meta:
         model = Habit
         fields = [
             "id", "name", "frequency", "category", "start_date", "created_at",
-            "current_streak", "best_streak", "success_rate", "best_days", "checkins",
+            "current_streak", "best_streak", "success_rate", "best_days",
+            "xp", "badges", "checkins",
         ]
         read_only_fields = ["id", "created_at"]

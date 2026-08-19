@@ -31,3 +31,21 @@ export function checkInHabit(habitId) {
 export function deleteHabit(habitId) {
   return request(`/habits/${habitId}/`, { method: "DELETE" });
 }
+
+export function getGamificationSummary() {
+  return request("/gamification/summary/");
+}
+
+export async function downloadReport() {
+  const res = await fetch(`${BASE_URL}/habits/report/pdf/`);
+  if (!res.ok) {
+    throw new Error(`Request failed: ${res.status}`);
+  }
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "habit_progress_report.pdf";
+  link.click();
+  window.URL.revokeObjectURL(url);
+}

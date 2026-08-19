@@ -126,6 +126,27 @@ class Habit(models.Model):
         top_count = ranked[0][1]
         return [weekday_names[day] for day, count in ranked if count == top_count]
 
+    @property
+    def xp(self):
+        """10 XP per check-in + streak milestone bonuses."""
+        base_xp = self.checkins.count() * 10
+        best = self.best_streak
+        milestone_bonus = sum(
+            bonus for milestone, bonus in
+            [(7, 50), (14, 75), (30, 150), (60, 300), (100, 500)]
+            if best >= milestone
+        )
+        return base_xp + milestone_bonus
+
+    @property
+    def badges(self):
+        from .gamification import BADGE_DEFINITIONS
+        return [
+            {"code": b["code"], "name": b["name"], "description": b["description"], "icon": b["icon"]}
+            for b in BADGE_DEFINITIONS
+            if b["condition"](self)
+        ]
+
 class CheckIn(models.Model):
     habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name="checkins")
     date = models.DateField()
